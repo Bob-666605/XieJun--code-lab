@@ -1,0 +1,33 @@
+method: mash
+dataset: sidd
+
+# 模型参数
+model:
+  in_channels: 1
+  out_channels: 1
+  base_channels: 48
+  use_attention: true
+
+# MASH 特有参数
+mash:
+  tau_high: 0.8
+  tau_medium: 0.5
+  tau_low: 0.2
+  epsilon_low: 1.5
+  epsilon_high: 2.5
+  num_predictions: 3
+  shuffling_tile_size: 4
+  probe_iters: 20
+  train_iters_no_lps: 100
+  train_iters_lps_pre: 50
+  train_iters_lps_post: 100
+  lr: 0.001
+
+# 训练参数
+training:
+  epochs: 100
+  batch_size: 8
+  lr: 0.0004
+  patch_size: 256
+  val_interval: 5
+  save_interval: 10

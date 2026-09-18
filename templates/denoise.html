@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% set active_page = 'denoise' %}
+
+{% block title %}去噪对比 - 自然场景图像去噪系统{% endblock %}
+
+{% block content %}
+<section class="denoise-page">
+    <div class="container">
+        <h1 class="page-title">图像去噪对比</h1>
+
+        <!-- 上传区域 -->
+        <div class="upload-section" id="upload-section">
+            <div class="upload-area" id="upload-area">
+                <div class="upload-area__icon">&#128228;</div>
+                <p class="upload-area__text">拖拽图像到此处，或点击选择文件</p>
+                <p class="upload-area__hint">支持 JPG / PNG / BMP，最大 10MB</p>
+                <input type="file" id="file-input" accept="image/*" hidden>
+            </div>
+            <div class="upload-preview" id="upload-preview" style="display: none;">
+                <img id="preview-image" src="" alt="预览">
+                <button class="btn btn--small btn--outline" id="change-image">更换图像</button>
+            </div>
+        </div>
+
+        <!-- 快速尝试 demo 图 -->
+        <div class="demo-section" id="demo-section">
+            <p class="demo-section__label">快速尝试（点击即用）</p>
+            <div class="demo-section__grid">
+                <img class="demo-thumb" src="/static/demo_images/demo_1.png" alt="场景1" data-demo="demo_1.png">
+                <img class="demo-thumb" src="/static/demo_images/demo_2.png" alt="场景2" data-demo="demo_2.png">
+                <img class="demo-thumb" src="/static/demo_images/demo_3.png" alt="场景3" data-demo="demo_3.png">
+                <img class="demo-thumb" src="/static/demo_images/demo_4.png" alt="场景4" data-demo="demo_4.png">
+                <img class="demo-thumb" src="/static/demo_images/demo_5.png" alt="场景5" data-demo="demo_5.png">
+            </div>
+        </div>
+
+        <!-- 配置区域 -->
+        <div class="config-section" id="config-section" style="display: none;">
+            <h2 class="section-title">去噪配置</h2>
+
+            <!-- 方法选择 -->
+            <div class="config-group">
+                <label class="config-label">选择方法（可多选）</label>
+                <div class="method-checkboxes">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="method" value="mash" checked>
+                        <span class="checkbox-label">MASH (核心)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="method" value="dncnn">
+                        <span class="checkbox-label">DnCNN</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="method" value="traditional">
+                        <span class="checkbox-label">传统方法</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 传统方法子选项 -->
+            <div class="config-group" id="trad-method-group" style="display: none;">
+                <label class="config-label">传统方法类型</label>
+                <select id="traditional-method" class="select-input">
+                    <option value="median">中值滤波</option>
+                    <option value="mean">均值滤波</option>
+                    <option value="gaussian">高斯滤波</option>
+                    <option value="bilateral">双边滤波</option>
+                    <option value="wavelet">小波去噪</option>
+                </select>
+            </div>
+
+            <!-- 噪声类型 -->
+            <div class="config-group">
+                <label class="config-label">噪声类型</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="noise-type" value="gaussian" checked>
+                        <span>高斯噪声</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="noise-type" value="poisson">
+                        <span>泊松噪声</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="noise-type" value="salt">
+                        <span>椒盐噪声</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="noise-type" value="real">
+                        <span>真实噪声（不添加）</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 噪声强度 -->
+            <div class="config-group" id="noise-level-group">
+                <label class="config-label">噪声强度: <span id="noise-level-value">25</span></label>
+                <input type="range" id="noise-level" min="5" max="75" value="25" class="range-input">
+            </div>
+
+            <!-- 开始按钮 -->
+            <button class="btn btn--primary btn--large" id="start-denoise">开始去噪</button>
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading-section" id="loading-section" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">正在处理，请稍候...</p>
+        </div>
+
+        <!-- 结果展示 -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2 class="section-title">评估与对比结果</h2>
+
+            <!-- 各方法去噪结果 -->
+            <div class="method-results-grid" id="method-results-grid">
+                <!-- 动态生成：带噪原图基准 + 各方法去噪结果 -->
+            </div>
+
+            <!-- 方法对比视图 -->
+            <div class="compare-section" id="compare-section">
+                <h3 class="results-subtitle">方法对比</h3>
+                <div class="compare-selectors">
+                    <div class="compare-selector">
+                        <label class="config-label">左侧方法</label>
+                        <select id="compare-left" class="select-input compare-select"></select>
+                    </div>
+                    <div class="compare-selector">
+                        <label class="config-label">右侧方法</label>
+                        <select id="compare-right" class="select-input compare-select"></select>
+                    </div>
+                </div>
+                <div class="compare-view" id="compare-view">
+                    <div class="compare-view__card">
+                        <div class="compare-view__label" id="compare-left-label">方法A</div>
+                        <img id="compare-left-img" class="compare-view__image" src="" alt="左侧方法">
+                        <div class="compare-view__metrics" id="compare-left-metrics"></div>
+                    </div>
+                    <div class="compare-view__divider">VS</div>
+                    <div class="compare-view__card">
+                        <div class="compare-view__label" id="compare-right-label">方法B</div>
+                        <img id="compare-right-img" class="compare-view__image" src="" alt="右侧方法">
+                        <div class="compare-view__metrics" id="compare-right-metrics"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 指标对比表格 -->
+            <div class="metrics-table-container">
+                <h3>量化指标对比</h3>
+                <table class="metrics-table" id="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>方法</th>
+                            <th>类型</th>
+                            <th>PSNR (dB) ↑</th>
+                            <th>SSIM ↑</th>
+                            <th>耗时 (ms)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="metrics-tbody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="results-actions">
+                <button class="btn btn--outline" id="reset-btn">重新开始</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/denoise.js') }}"></script>
+{% endblock %}

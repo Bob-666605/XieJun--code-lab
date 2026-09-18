@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% set active_page = 'evaluate' %}
+
+{% block title %}性能评估 - 自然场景图像去噪系统{% endblock %}
+
+{% block content %}
+<section class="evaluate-page">
+    <div class="container">
+        <h1 class="page-title">性能评估</h1>
+
+        <!-- 评估配置 -->
+        <div class="eval-config">
+            <div class="config-group">
+                <label class="config-label">选择方法</label>
+                <div class="method-checkboxes">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="eval-method" value="mash" checked>
+                        <span class="checkbox-label">MASH</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="eval-method" value="dncnn" checked>
+                        <span class="checkbox-label">DnCNN</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="eval-method" value="traditional" checked>
+                        <span class="checkbox-label">传统方法</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <label class="config-label">噪声级别 (σ)</label>
+                <input type="range" id="eval-noise-level" min="10" max="50" value="25" step="5" class="range-input">
+                <span id="eval-noise-value">25</span>
+            </div>
+
+            <button class="btn btn--primary" id="run-evaluate">运行评估</button>
+        </div>
+
+        <!-- 评估结果 -->
+        <div class="eval-results" id="eval-results" style="display: none;">
+
+            <!-- 量化评估表格 (论文风格) -->
+            <div class="eval-table-container">
+                <h3>量化评估结果</h3>
+                <table class="eval-table" id="eval-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th class="col-separator">σ=15 PSNR</th>
+                            <th>σ=15 SSIM</th>
+                            <th class="col-separator">σ=25 PSNR</th>
+                            <th>σ=25 SSIM</th>
+                            <th class="col-separator">σ=50 PSNR</th>
+                            <th>σ=50 SSIM</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eval-tbody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3 class="chart-title">PSNR 对比 (dB)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="psnr-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h3 class="chart-title">SSIM 对比</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="ssim-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结论 -->
+            <div class="eval-conclusion" id="eval-conclusion">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 方法介绍 -->
+        <div class="methods-intro">
+            <h2 class="section-title">方法介绍</h2>
+            <div class="methods-grid">
+                <div class="method-card">
+                    <h3 class="method-card__title">MASH</h3>
+                    <span class="method-card__type">自监督</span>
+                    <p class="method-card__desc">
+                        基于自适应掩码的自监督去噪方法。通过随机掩码和像素重排构造自监督信号，
+                        无需干净图像对即可训练。推理时多次预测取平均，提升去噪稳定性。
+                    </p>
+                    <ul class="method-card__pros">
+                        <li>无需干净图像</li>
+                        <li>适应未知噪声类型</li>
+                        <li>适合真实场景</li>
+                    </ul>
+                </div>
+                <div class="method-card">
+                    <h3 class="method-card__title">DnCNN</h3>
+                    <span class="method-card__type">监督</span>
+                    <p class="method-card__desc">
+                        经典的 CNN 去噪方法，通过残差学习预测噪声成分。
+                        网络结构简单，推理速度快，但需要干净-噪声图像对进行训练。
+                    </p>
+                    <ul class="method-card__pros">
+                        <li>推理速度快</li>
+                        <li>结构简单</li>
+                        <li>已知噪声效果好</li>
+                    </ul>
+                </div>
+                <div class="method-card">
+                    <h3 class="method-card__title">传统方法</h3>
+                    <span class="method-card__type">无训练</span>
+                    <p class="method-card__desc">
+                        包含均值滤波、中值滤波、高斯滤波、双边滤波、小波去噪等经典方法。
+                        无需训练，计算简单，但去噪效果有限。
+                    </p>
+                    <ul class="method-card__pros">
+                        <li>无需训练</li>
+                        <li>计算高效</li>
+                        <li>可解释性强</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/evaluate.js') }}"></script>
+{% endblock %}

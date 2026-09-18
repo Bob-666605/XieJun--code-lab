@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% set active_page = 'index' %}
+
+{% block title %}首页 - 自然场景图像去噪系统{% endblock %}
+
+{% block content %}
+<!-- Hero 区域 -->
+<section class="hero">
+    <div class="hero__content">
+        <h1 class="hero__title">自然场景图像噪声消除系统</h1>
+        <p class="hero__subtitle">基于 MASH 自监督学习的多方法对比去噪平台</p>
+        <p class="hero__desc">
+            支持 MASH、DnCNN、传统滤波等多种去噪方法，提供直观的可视化对比和性能评估
+        </p>
+        <div class="hero__cta">
+            <a href="/denoise" class="btn btn--primary">开始去噪</a>
+            <a href="/evaluate" class="btn btn--outline">查看评估</a>
+        </div>
+    </div>
+</section>
+
+<!-- 特性介绍 -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">核心特性</h2>
+        <div class="features__grid">
+            <div class="feature-card">
+                <div class="feature-card__icon">&#128300;</div>
+                <h3 class="feature-card__title">MASH 核心算法</h3>
+                <p class="feature-card__desc">基于自适应掩码的自监督去噪方法，无需干净图像对即可训练</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon">&#128200;</div>
+                <h3 class="feature-card__title">多方法对比</h3>
+                <p class="feature-card__desc">支持 MASH、DnCNN、均值/中值/高斯/双边/小波滤波等多种方法</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon">&#128241;</div>
+                <h3 class="feature-card__title">真实场景噪声</h3>
+                <p class="feature-card__desc">使用 SIDD 和 FMDD 真实噪声数据集，贴近实际应用场景</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon">&#128202;</div>
+                <h3 class="feature-card__title">量化评估</h3>
+                <p class="feature-card__desc">提供 PSNR、SSIM、MAE 等客观指标和可视化对比</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 技术路线 -->
+<section class="tech-stack">
+    <div class="container">
+        <h2 class="section-title">技术架构</h2>
+        <div class="tech-stack__grid">
+            <div class="tech-item">
+                <span class="tech-item__label">深度学习框架</span>
+                <span class="tech-item__value">PyTorch</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-item__label">后端服务</span>
+                <span class="tech-item__value">Flask</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-item__label">核心算法</span>
+                <span class="tech-item__value">MASH (自监督)</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-item__label">对比方法</span>
+                <span class="tech-item__value">DnCNN + 传统滤波</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-item__label">数据集</span>
+                <span class="tech-item__value">SIDD + FMDD</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-item__label">评估指标</span>
+                <span class="tech-item__value">PSNR / SSIM / MAE</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 快速开始 -->
+<section class="quick-start">
+    <div class="container">
+        <h2 class="section-title">快速开始</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step__number">1</div>
+                <h3 class="step__title">上传图像</h3>
+                <p class="step__desc">支持 JPG、PNG、BMP 等常见格式</p>
+            </div>
+            <div class="step">
+                <div class="step__number">2</div>
+                <h3 class="step__title">选择方法</h3>
+                <p class="step__desc">可同时选择多种去噪方法进行对比</p>
+            </div>
+            <div class="step">
+                <div class="step__number">3</div>
+                <h3 class="step__title">查看结果</h3>
+                <p class="step__desc">直观对比去噪效果和量化指标</p>
+            </div>
+        </div>
+        <div class="quick-start__cta">
+            <a href="/denoise" class="btn btn--primary btn--large">立即体验</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

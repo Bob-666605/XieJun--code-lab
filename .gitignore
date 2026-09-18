@@ -1,0 +1,38 @@
+# ============ Python ============
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# ============ 运行产物 ============
+# 用户上传的图像与去噪结果图（运行后自动生成）
+static/uploads/
+static/results/
+
+# ============ 数据集 ============
+# SIDD / FMDD 数据集体积过大，需自行下载
+data/
+
+# ============ 日志与缓存 ============
+*.log
+.cache/
+
+# ============ 编辑器 ============
+.vscode/
+.idea/
+*.swp
+
+# ============ 系统文件 ============
+.DS_Store
+Thumbs.db
+desktop.ini

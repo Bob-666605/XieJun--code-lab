@@ -1,0 +1,24 @@
+method: dncnn
+dataset: sidd
+
+# 模型参数
+model:
+  in_channels: 1
+  out_channels: 1
+  depth: 17
+  features: 64
+
+# 训练参数
+training:
+  epochs: 80
+  batch_size: 16
+  lr: 0.001
+  patch_size: 256
+  val_interval: 5
+  save_interval: 10
+
+# 学习率调度
+scheduler:
+  type: step
+  step_size: 30
+  gamma: 0.5
